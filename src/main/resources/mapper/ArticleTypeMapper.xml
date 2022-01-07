@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ito.blog.dao.ArticleTypeMapper">
+    <resultMap id="BaseResultMap" type="ArticleType">
+        <result property="id" column="id" />
+        <result property="name" column="name"/>
+    </resultMap>
+    <select id="selectAllArticleType" resultMap="BaseResultMap">
+        select * from article_type where id != 1;
+    </select>
+    <select id="selectIdByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select id from article_type where name = #{name};
+    </select>
+    <select id="selectIdByArticleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select type_id
+        from article
+        where id = #{id};
+    </select>
+</mapper>

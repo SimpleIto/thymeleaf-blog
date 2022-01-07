@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ito.blog.dao.CommentMapper">
+    <resultMap id="BaseResultMap" type="Comment">
+        <result property="id" column="id" />
+        <result property="articleId" column="article_id" />
+        <result property="isHost" column="is_host"/>
+        <result property="isReply" column="is_reply" />
+        <result property="isNotified" column="is_notified"/>
+        <result property="replyTo" column="reply_to" />
+        <result property="replyContent" column="reply_content"/>
+        <result property="content" column="content" />
+        <result property="authorName" column="author_name" />
+        <result property="authorEmail" column="author_email" />
+        <result property="floor" column="floor" />
+        <result property="likeCount" column="like_count" />
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+    <resultMap id="LatestComments" type="Comment">
+        <result property="id" column="id" />
+        <result property="articleId" column="article_id" />
+        <result property="authorName" column="author_name" />
+        <result property="articleTitle" column="article_title"/>
+    </resultMap>
+    <select id="selectCommentsByArticleIdAndPage" resultMap="BaseResultMap">
+        SELECT origin.id,article_id,is_host,is_reply,reply_to,reply_content,content,author_name,author_email,floor,like_count,created_at
+        FROM comment as origin left join (select id,content reply_content from comment)as temp on reply_to = temp.id
+        WHERE article_id = #{articleId}
+        order by created_at desc limit #{pageSize} offset #{offset};
+    </select>
+    <select id="selectCommentCountByArticleId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*)
+        from comment
+        where article_id = #{articleId};
+    </select>
+    <insert id="insert" parameterType="org.ito.blog.entity.Comment">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into comment (article_id,is_notified,content,author_name,author_email)
+        values (#{articleId},#{isNotified},#{content},#{authorName},#{authorEmail});
+    </insert>
+    <insert id="insertReply" parameterType="org.ito.blog.entity.Comment">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into comment (article_id,is_reply,reply_to,is_notified,content,author_name,author_email)
+        values (#{articleId},#{isReply},#{replyTo},#{isNotified},#{content},#{authorName},#{authorEmail});
+    </insert>
+    <select id="selectAuthorNameById" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select author_name
+        from comment
+        where id = #{id};
+    </select>
+    <select id="selectLatestComments" resultMap="LatestComments">
+        select comment.id,comment.article_id,comment.author_name,article.title article_title
+        from comment inner join article on article_id = article.id
+        order by comment.created_at desc
+        limit 5 offset 0;
+    </select>
+    <delete id="delete" parameterType="java.lang.Integer">
+
+    </delete>
+    <insert id="insertHostComment" parameterType="org.ito.blog.entity.Comment">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into comment (article_id,is_host,is_notified,content,author_name,author_email)
+        values (#{articleId},#{isHost},#{isNotified},#{content},#{authorName},#{authorEmail});
+    </insert>
+    <insert id="insertHostReply" parameterType="org.ito.blog.entity.Comment">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into comment (article_id,is_host,is_reply,reply_to,is_notified,content,author_name,author_email)
+        values (#{articleId},#{isHost},#{isReply},#{replyTo},#{isNotified},#{content},#{authorName},#{authorEmail});
+    </insert>
+    <select id="selectArticleIdById" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select article_id
+        from comment
+        where id = #{id};
+    </select>
+</mapper>

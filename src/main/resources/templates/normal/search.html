@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title th:text="'\''+${key}+'\''+'的搜索结果 - SimpleIto'">SimpleIto | 伊东的个人博客</title>
+    <!-- Bootstrap -->
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="/css/search.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="sidebar-toggle visible-xs-block"><img src="/img/sidebar_toggle_open.png"></div>
+        <!-- 大屏左侧栏 -->
+        <div th:replace="template/layout :: sidebar"></div>
+        <div class="shadow"></div>
+        <!-- 小屏头部 -->
+        <header th:replace="template/layout :: xs-header"></header>
+
+        <!-- 内容区 -->
+        <!-- 间隔效果，开始位置：小屏顶部 大屏间隔 -->
+        <div class="layout-spacing hidden-xs"></div
+        ><div class="content">
+        <div class="content-separator hidden-xs"></div>
+        <main>
+            <div class="search-title">
+                <h1 th:text="'搜寻结果：'+${key}"></h1>
+            </div>
+            <div class="main-content">
+                <h4 class="search-warning" style="display: none">无更多结果！</h4>
+                <article th:each="article : ${articles}">
+                    <header class="article-title"><h1><a th:href="@{'/blog/article/'+${article.id}}" th:text="${article.title}"></a></h1></header>
+                    <div th:id="'article-'+${article.id}" class="article-content">
+                        <p th:text="${article.content}"></p>
+                    </div>
+                    <p class="article-content-more"><a th:href="@{'/blog/article/'+${article.id}}">继续阅读 >></a></p>
+                    <div class="footer-spacing"><div></div><div></div></div>
+                    <footer class="article-meta">
+                        <div class="article-calendar"><span class="article-meta-icon glyphicon glyphicon-calendar"></span><span th:text="${#dates.format(article.createdAt,'yyyy年MM月dd日')}"></span></div>
+                        <div class="article-comments"><span class="article-meta-icon glyphicon glyphicon-comment"></span><span th:text="${article.commentNumber}"></span> <span>Comments</span></div>
+                    </footer>
+                </article>
+                <div class="page-controls">
+                    <a class="page-control-previous"><span class="glyphicon glyphicon-triangle-left"></span> Previous</a>
+                    <div style="height: 18px;display: inline-block;vertical-align: middle"></div>
+                    <a class="page-control-next">Next <span class="glyphicon glyphicon-triangle-right"></span></a>
+                </div>
+            </div>
+        </main>
+    </div>
+    </div>
+</div>
+
+<script src="/jquery/jquery-1.12.4.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/js/layout.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(".category-item").removeClass("active");
+
+    var currentPage = [[${page}]];
+    if(currentPage==null||currentPage=='null'||currentPage=='')
+        currentPage = 1;
+    initPageHref();
+    initPageControls(currentPage);
+    if($("article").length==0)
+        $(".search-warning").css("display","block");
+
+    function initPageHref(){
+        var currentUrl = window.location.href;
+        $(".page-control-previous").attr("href",changeURLArg(currentUrl,"page",currentPage-1));
+        $(".page-control-next").attr("href",changeURLArg(currentUrl,"page",currentPage+1));
+    }
+    function initPageControls(page){
+        var resultCount = $("article").length;
+        if(page==1)
+            $(".page-control-previous").css("display","none");
+        if(resultCount<8)
+            $(".page-control-next").css("display","none");
+    }
+    function changeURLArg(url,arg,arg_val){
+        var pattern=arg+'=([^&]*)';
+        var replaceText=arg+'='+arg_val;
+        if(url.match(pattern)){
+            var tmp='/('+ arg+'=)([^&]*)/gi';
+            tmp=url.replace(eval(tmp),replaceText);
+            return tmp;
+        }else{
+            if(url.match('[\?]')){
+                return url+'&'+replaceText;
+            }else{
+                return url+'?'+replaceText;
+            }
+        }
+        return url+'\n'+arg+'\n'+arg_val;
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

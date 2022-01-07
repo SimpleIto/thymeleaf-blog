@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SimpleIto | 伊东的个人博客</title>
+  <link href="/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/layout.css" rel="stylesheet" type="text/css">
+  <link href="/css/index.css" rel="stylesheet" type="text/css" >
+  <link href="/editor.md/css/editormd.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="sidebar-toggle visible-xs-block"><img src="/img/sidebar_toggle_open.png"></div>
+      <div th:replace="template/layout :: sidebar"></div>
+      <div class="shadow"></div>
+      <header th:replace="template/layout :: xs-header"></header>
+
+      <div class="layout-spacing hidden-xs"></div
+      ><div class="content">
+        <div class="content-separator hidden-xs"></div>
+        <main>
+          <div th:if="${category} != null" class="article-category">
+            <h1 th:text="${category}">This is the Category</h1>
+          </div>
+          <div class="main-content">
+            <article th:each="article : ${articles}">
+              <header class="article-title"><span class="glyphicon glyphicon-list-alt"></span><h1><a th:href="@{'/blog/article/'+${article.id}}" th:text="${article.title}"></a></h1></header>
+              <div th:id="'article-'+${article.id}" class="article-content">
+                <textarea style="display: none" th:text="${article.content}"></textarea>
+              </div>
+              <p class="article-content-more"><a th:href="@{'/blog/article/'+${article.id}}">继续阅读 >></a></p>
+              <div class="footer-spacing"><div></div><div></div></div>
+              <footer class="article-meta">
+                <div class="article-calendar"><span class="article-meta-icon glyphicon glyphicon-calendar"></span><span th:text="${#dates.format(article.createdAt,'yyyy年MM月dd日')}"></span></div>
+                <div class="article-comments"><span class="article-meta-icon glyphicon glyphicon-comment"></span><span th:text="${article.commentNumber}"></span> <span>Comments</span></div>
+              </footer>
+            </article>
+          </div>
+          <div class="page-controls">
+            <a th:if="${isArticleLeft}" th:href="${category == null} ? @{/blog(page=${page}+1)} : @{/blog(category=${category},page=${page}+1)}" class="page-control-order"><span class="glyphicon glyphicon-triangle-left"></span> Order page</a>
+            <div style="height: 18px;display: inline-block;vertical-align: middle"></div>
+            <a th:if="${page}!=1" th:href="${category == null} ? @{/blog(page=${page}-1)} : @{/blog(category=${category},page=${page}-1)}" class="page-control-newer">Newer page <span class="glyphicon glyphicon-triangle-right"></span></a>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <script src="/jquery/jquery-1.12.4.min.js"></script>
+  <script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <script src="/editor.md/lib/marked.min.js"></script>
+  <script src="/editor.md/lib/prettify.min.js"></script>
+  <script src="/editor.md/lib/raphael.min.js"></script>
+  <script src="/editor.md/lib/underscore.min.js"></script>
+  <script src="/editor.md/lib/sequence-diagram.min.js"></script>
+  <script src="/editor.md/lib/flowchart.min.js"></script>
+  <script src="/editor.md/lib/jquery.flowchart.min.js"></script>
+  <script src="/editor.md/js/editormd.min.js"></script>
+  <script src="/js/layout.js"></script>
+  <script th:inline="javascript" th:each="article : ${articles}">
+      /*<![CDATA[*/
+      editormd.markdownToHTML([['article-'+${article.id}]], {
+          htmlDecode : "style,script,iframe|on*",  //html标签解析
+          codeFold : true,
+          emoji : true,   //emoji表情解析
+          taskList : true,
+          tocm : true,    //使用[TOCM]目录
+          tocContainer : "#nonexistent",
+          tex : true,  // 科学公式TeX语言支持
+          flowChart : true,  // 流程图支持
+          sequenceDiagram : true,  //时序图支持
+      });
+      /*]]>*/
+  </script>
+  <script>
+    //该处代码用以消除主页游览文章内容开头的空行<br>
+    //会产生<br>的原因时因为文章中使用了[TOCM]
+    //为什么文章要使用[TOCM]呢，是因为我想阅读具体文章时，根据我写文时的意愿，让它是否显示目录
+    //若在首页中直接关闭[TOCM]的解析，则会留下"[TOCM]"文字标签，若开启则会留一个难看的默认目录容器。
+    //因此，开启且配合tocContainer将目录解析到一个不存在的div上，则可以消除，但会留下空行<br>。所以才会用来消除
+    var $emptyLine =  $(".article-content>br:first-child");
+    $emptyLine.remove();
+  </script>
+  <script th:inline="javascript">
+      /*<![CDATA[*/
+      var currentCategory = [[${categoryId}]];
+      if(currentCategory==null||currentCategory=='null')
+          currentCategory = '1';
+
+      function clearCategoryActive(){
+          $(".category-item").removeClass("active");
+      }
+      function activeCategory(cc){
+          clearCategoryActive();
+          $("#category-"+cc).addClass("active");
+      }
+      activeCategory(currentCategory);
+      /*]]>*/
+  </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+//声明gradle脚本自身需要使用的资源。可以声明的资源包括依赖项、第三方插件、maven仓库地址等
+buildscript {
+    ext {
+        springBootVersion = '2.0.5.RELEASE'
+    }
+    //repositories指定使用什么代码仓库
+    repositories {
+        mavenCentral()  //引用maven代码托管库
+    }
+    //引入springboot的gradle插件
+    //该插件制定了后续所有引入的springboot依赖的来源和版本，后面声明具体依赖的时候讲不在指定依赖版本
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'org.ito'
+version = '0.0.1-SNAPSHOT'
+//指定编译java源代码的jdk版本
+sourceCompatibility = 1.8
+
+allprojects {
+    repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+//添加依赖
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')   //compile表示编译和运行时都需要
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.2')
+    runtime('mysql:mysql-connector-java')   //runtime表示仅在运行时需要，编译时不依赖
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+

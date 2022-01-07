@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>SimpleIto | 伊东的个人博客</title>
+    <!-- Bootstrap -->
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/layout.css" rel="stylesheet" type="text/css" >
+    <link href="/editor.md/css/editormd.min.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="sidebar-toggle visible-xs-block"><img src="/img/sidebar_toggle_open.png"></div>
+        <!-- 大屏左侧栏 -->
+        <div class="sidebar hidden-xs" th:fragment="sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-header-decoration hidden-xs">
+                    <div class="hidden-xs sidebar-items sidebar-first-item">
+                        <div class="header-title" th:fragment="header-title">
+                            <img class="header-ico center-block img-responsive img-rounded" src="/img/header-ico.jpg"/>
+                            <div class="site-address"><a href="/blog" class="text-center">SIMPLEITO</a></div>
+                            <p class="site-description text-center">伊东的个人博客</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-items">
+                    <form th:action="@{'/blog/search'}" method="GET" class="input-group">
+                        <input name="key" type="text" class="form-control search-input" placeholder="Search">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default search-button" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="sidebar-menu sidebar-items hidden-xs">
+                    <ul class="nav nav-pills nav-stacked menu" th:fragment="menu-items">
+                        <li class="active category-item" th:id="'category-1'">
+                            <a href="/blog">首页</a>
+                        </li>
+                        <li class="category-item" th:each="type : ${articleTypes}" th:id="'category-'+${type.id}">
+                            <a th:href="@{'/blog?category='+${type.name}}" th:text="${type.name}"></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="sidebar-items">
+                    <div class="latest-articles-container">
+                        <h3 class="latest-articles-title">近期文章</h3>
+                        <ul class="latest-articles">
+                            <li th:each="latestArticle : ${latestArticles}" class="latest-article"><a th:href="@{'/blog/article/'+${latestArticle.id}}" th:text="${latestArticle.title}"></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sidebar-items">
+                    <div class="latest-comments-container">
+                        <h3 class="latest-comments-title">最新评论</h3>
+                        <ul class="latest-comments">
+                            <li class="latest-comment" th:each="latestComment : ${latestComments}">
+                                <span class="latest-comment-author" th:text="${latestComment.authorName}"></span>
+                                发表在《<a class="latest-comment-article" th:href="@{'/blog/article/'+${latestComment.articleId}+'#comment-'+${latestComment.id}}" th:text="${latestComment.articleTitle}"></a>》
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sidebar-items sidebar-last-item">
+                    <p class="blog-copyright">Copyright © 2018 simpleito.All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+        <div class="shadow"></div>
+        <!-- 小屏头部 -->
+        <header class="xs-header-container visible-xs-block" th:fragment="xs-header">
+            <div class="xs-header-title-container">
+                <div th:replace="this::header-title"></div>
+            </div>
+            <nav id="xs-menu" class="navbar navbar-inverse">
+                <div class="navbar-header">
+                    <button id="xs-menu-toggle" type="button" class="btn btn-default visible-xs-block" data-toggle="collapse" data-target="#xs-menu-items">
+                        <span class="glyphicon glyphicon glyphicon-list"></span>
+                    </button>
+                </div>
+                <div id="xs-menu-items" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav" th:include="this::menu-items">
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!-- 内容区 -->
+        <!-- 间隔效果，开始位置：小屏顶部 大屏间隔 -->
+        <div class="layout-spacing hidden-xs"></div
+        ><div class="content">
+        <div class="content-separator hidden-xs"></div>
+        <main>
+            <div class="main-content">
+
+            </div>
+        </main>
+    </div>
+    </div>
+</div>
+
+<script src="/jquery/jquery-1.12.4.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<script src="/editor.md/lib/marked.min.js"></script>
+<script src="/editor.md/lib/prettify.min.js"></script>
+<script src="/editor.md/lib/raphael.min.js"></script>
+<script src="/editor.md/lib/underscore.min.js"></script>
+<script src="/editor.md/lib/sequence-diagram.min.js"></script>
+<script src="/editor.md/lib/flowchart.min.js"></script>
+<script src="/editor.md/lib/jquery.flowchart.min.js"></script>
+<script src="/editor.md/js/editormd.js"></script>
+<script src="/js/layout.js"></script>
+<script th:inline="javascript" th:each="article : ${articles}">
+    /*<![CDATA[*/
+    editormd.markdownToHTML([['article-'+${article.id}]], {
+        // htmlDecode : "style,script,iframe|on*",  //html标签解析
+        codeFold : true,
+        emoji : true,   //emoji表情解析
+        taskList : true,
+        tocm : true,    //使用[TOCM]目录
+        tex : true,  // 科学公式TeX语言支持
+        flowChart : true,  // 流程图支持
+        sequenceDiagram : true,  //时序图支持
+    });
+    /*]]>*/
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var currentCategory = [[${categoryId}]];
+    if(currentCategory==null||currentCategory=='null')
+        currentCategory = '1';
+
+    function clearCategoryActive(){
+        $(".category-item").removeClass("active");
+    }
+    function activeCategory(cc){
+        clearCategoryActive();
+        $("#category-"+cc).addClass("active");
+    }
+    activeCategory(currentCategory);
+    /*]]>*/
+</script>
+</body>
+</html>

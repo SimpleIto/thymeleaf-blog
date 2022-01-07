@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SimpleIto后台管理</title>
+    <style>
+        #main-frameset{
+            max-height: 5000px;
+        }
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus{
+            -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
+            -webkit-text-fill-color: #555 !important;
+        }
+    </style>
+</head>
+    <frameset id="main-frameset" rows="110,*" frameborder="0" noresize="noresize">
+        <frame th:src="@{/blog/admin/admin_nav}" />
+        <frame th:src="@{/blog/admin/article_mgt}" name="frame-content" />
+    </frameset>
+</html>

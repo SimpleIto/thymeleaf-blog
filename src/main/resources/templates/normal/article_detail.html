@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title th:text="${article.title}+' - SimpleIto'">SimpleIto | 伊东的个人博客</title>
+    <!-- Bootstrap -->
+    <link href="/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/layout.css" rel="stylesheet" type="text/css">
+    <link href="/css/article_detail.css" rel="stylesheet" type="text/css" >
+    <link href="/editor.md/css/editormd.min.css" rel="stylesheet" />
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="sidebar-toggle visible-xs-block"><img src="/img/sidebar_toggle_open.png"></div>
+        <div th:replace="template/layout :: sidebar"></div>
+        <div class="shadow"></div>
+        <header th:replace="template/layout :: xs-header"></header>
+
+        <div class="layout-spacing hidden-xs"></div
+        ><div class="content">
+        <div class="content-separator hidden-xs"></div>
+        <main>
+            <div class="main-content">
+                <article>
+                    <header class="article-title"><h1 th:text="${article.title}"></h1></header>
+                    <span class="article-toc-toggle glyphicon glyphicon-list-alt visible-xs"></span>
+                    <div id="article-toc-container">
+                        <div class="article-nav-border"></div>
+                        <p class="article-nav-title">文章目录：</p>
+                        <div id="article-toc"></div>
+                    </div>
+                    <div th:id="'article-'+${article.id}" class="article-content">
+                        <textarea style="display: none" th:utext="${article.content}"></textarea>
+                    </div>
+                    <div class="footer-spacing"><div></div><div></div></div>
+                    <footer class="article-meta">
+                        <div class="article-calendar"><span class="article-meta-icon glyphicon glyphicon-calendar"></span><span th:text="${#dates.format(article.createdAt,'yyyy年MM月dd日')}"></span></div>
+                        <div class="article-comments"><span class="article-meta-icon glyphicon glyphicon-comment"></span><span th:text="${article.commentNumber}"></span> <span>Comments</span></div>
+                    </footer>
+                </article>
+            </div>
+            <div class="comments-container">
+                <div class="comments-tip">
+                    <div class="comments-number-container">
+                        <div class="comments-number"><span th:text="${article.commentNumber}">1703</span></div>
+                        <div class="comments-number-arrow"></div>
+                    </div>
+                    <span class="comments-tip-context">留下一个回复</span>
+                </div>
+                <div class="write-comment-main">
+                <form action="" method="post" class="write-comment">
+                    <div class="alert alert-danger comment-code-failed" role="alert" style="display: none">验证码校验失败</div>
+                    <input class="write-comment-reply-id" style="display: none" type="text" name="replyTo" value="0">
+                    <textarea class="write-comment-content form-control required-field" name="content" placeholder="参与讨论..." maxlength="220" rows="2"></textarea>
+                    <div class="write-comment-meta row">
+                        <div class="write-comment-meta-container col-sm-6 col-xs-12"><div class="row">
+                            <div class="write-comment-meta-left col-sm-11 col-xs-12">
+                                <input name="authorName" placeholder="昵称" type="text" class="writing-name form-control required-field">
+                                <input name="authorEmail" placeholder="E-mail地址" type="email" class="writing-email form-control required-field">
+                            </div>
+                        </div></div>
+                        <div class="write-comment-meta-container col-sm-6 col-xs-12">
+                                <div class="input-group write-comment-code-container">
+                                    <input placeholder="Code" class="writing-code form-control required-field" type="text" name="commentCode">
+                                    <div class="input-group-btn">
+                                        <img class="comment-code" onclick="refresh()"><span class="comment-code-refresh glyphicon glyphicon-repeat" onclick="refresh()"></span>
+                                    </div>
+                                </div>
+                                <div class="write-comment-controls">
+                                    <input class="writing-notify-value" name="isNotified" type="text" value="false" style="display: none"/>
+                                    <img name="isNotified" class="writing-notify" src="/img/notify-x.png" alt="通知" title="有回复邮件通知我" onclick="changeWritingNotify(this)">
+                                    <button class="btn btn-default comment-submit-button" type="button" >发表评论</button>
+                                </div>
+                            </div>
+                    </div>
+                </form>
+                </div>
+                <div class="comments-content-container">
+                    <div th:replace="template/more_comments :: comments"></div>
+                </div>
+            </div>
+            <div th:if="${isCommentLeft}" class="load-more-comments">
+                <button class="load-more-comments-btn btn btn-default center-block" type="button" onclick="loadMoreComment()">加载更多评论</button>
+            </div>
+        </main>
+    </div>
+    </div>
+</div>
+
+<script src="/jquery/jquery-1.12.4.min.js"></script>
+<script src="/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="/jquery/jquery.animate-colors-min.js"></script>
+<script src="/editor.md/lib/marked.min.js"></script>
+<script src="/editor.md/lib/prettify.min.js"></script>
+<script src="/editor.md/lib/raphael.min.js"></script>
+<script src="/editor.md/lib/underscore.min.js"></script>
+<script src="/editor.md/lib/sequence-diagram.min.js"></script>
+<script src="/editor.md/lib/flowchart.min.js"></script>
+<script src="/editor.md/lib/jquery.flowchart.min.js"></script>
+<script src="/editor.md/js/editormd.min.js"></script>
+<script src="/js/layout.js"></script>
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    editormd.markdownToHTML([['article-'+${article.id}]], {
+        htmlDecode : "style,script,iframe|on*",  //html标签解析
+        codeFold : true,
+        atLink : false,
+        emailLink : false,
+        emoji : true,   //emoji表情解析
+        taskList : true,
+        toc : true,
+        tocm : true,    //使用[TOCM]目录
+        tocContainer : "#article-toc",
+        tex : true,  // 科学公式TeX语言支持
+        flowChart : true,  // 流程图支持
+        sequenceDiagram : true,  //时序图支持
+    });
+    /*]]>*/
+</script>
+<script src="/js/article_detail.js"></script>
+<script src="/js/jquery-autoHeightTextarea.js"></script>
+<script>
+    //实现"写评论框随内容自适应大小"
+    $(".write-comment-content").autoHeightTextarea({
+        rows:2
+    });
+</script>
+<script th:inline="javascript">
+    //实现根据文章类型，侧栏自动激活相应分类标签
+    /*<![CDATA[*/
+    var currentCategory = [[${categoryId}]];
+    if(currentCategory==null||currentCategory=='null')
+        currentCategory = '1';
+
+    function clearCategoryActive(){
+        $(".category-item").removeClass("active");
+    }
+    function activeCategory(cc){
+        clearCategoryActive();
+        $("#category-"+cc).addClass("active");
+    }
+    activeCategory(currentCategory);
+    /*]]>*/
+</script>
+</body>
+</html>

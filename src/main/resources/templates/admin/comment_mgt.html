@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <style>
+        .container .row{
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body style="padding:20px 0;">
+    <div class="container" style="max-width:400px;">
+        <div class="row">
+            <form id="form-publish" action="comment/publish" method="POST">
+                <textarea id="textarea-content" name="content" class="form-control" rows="4" required></textarea>
+                <div class="input-group">
+                    <div class="checkbox input-group-addon">
+                        <label><input id="checkbox-isReply" type="checkbox">回复评论</label>
+                    </div>
+                    <input name="replyId" id="input-reply" class="form-control" type="text" placeholder="待回复评论id">
+                    <input name="articleId" class="form-control" type="text" placeholder="文章id" required>
+                    <span class="input-group-btn" style="height: 68px;">
+                        <button type="submit" class="btn btn-default">发表</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+        <div class="row">
+            <form id="form-delete" class="input-group" method="POST">
+                <input  name="id" type="text" class="form-control" placeholder="待删除评论id" required>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit">删除</button>
+                </span>
+            </form>
+        </div>
+    </div>
+    <script src="/jquery/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript">
+        $("#form-publish").submit(function () {
+            publishComment();
+            return false;
+        })
+        $("#form-delete").submit(function () {
+            deleteComment();
+            return false;
+        })
+        $("#checkbox-isReply").change(function () {
+            if($(this).is(":checked")){
+                $("input[name='articleId']").removeAttr("required");
+                $("input[name='replyId']").attr("required","required");
+            }else{
+                $("input[name='articleId']").attr("required","required");
+                $("input[name='replyId']").removeAttr("required");
+            }
+        });
+        function publishComment(){
+            var url = "comment/reply";
+            if(!$("#checkbox-isReply").is(":checked")){
+                url = "comment/write";
+            }
+            $.ajax({
+                url:url,
+                dataType: "json",
+                async: true,
+                data: $("#form-publish").serialize(),
+                type:"POST",
+                success:function (res) {
+                    alert(res.description);
+                },
+                error:function(){
+                    alert("连接超时或未知错误");
+                }
+            });
+        }
+        function deleteComment(){
+            $.ajax({
+                url:"comment/delete",
+                dataType: "json",
+                async: true,
+                data:$("#form-delete").serialize(),
+                type:"POST",
+                success:function (res) {
+                    alert(res.description);
+                },
+                error:function(){
+                    alert("连接超时");
+                }
+            });
+        }
+    </script>
+</body>
+</html>

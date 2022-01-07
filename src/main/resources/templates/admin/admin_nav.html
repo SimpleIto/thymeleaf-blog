@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+        <title>Jus</title>
+        <!-- Bootstrap core CSS -->
+        <link href="/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/admin_nav.css" rel="stylesheet">
+    </head>
+    <style>
+        body{
+            padding-top:0;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <div class="masthead">
+                <h3 class="text-muted">Project name</h3>
+                <nav>
+                    <ul class="nav nav-justified">
+                        <li class="active" onclick="changeActive(this)"><a target="frame-content" href="article_mgt">文章管理</a></li>
+                        <li onclick="changeActive(this)"><a target="frame-content" href="comment_mgt">评论管理</a></li>
+                        <li onclick="changeActive(this)"><a>待续</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <script src="/jquery/jquery-1.12.4.min.js"></script>
+        <script type="text/javascript">
+            function changeActive(dse){
+                $("li").removeClass("active");
+                $(dse).addClass("active");
+            }
+        </script>
+    </body>
+</html>

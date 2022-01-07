@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="comments" th:each="comment:${comments}" th:id="'comment-'+${comment.id}" class="comment">
+    <div class="comment-left">
+        <img class="comment-photo" th:src="${comment.isHost}? '/img/header-ico.jpg' : '/img/general_photo.png'">
+        <p class="comment-author" th:text="${comment.authorName}">ItoKamotaro</p>
+    </div>
+    <div class="comment-right">
+        <!--TODO:回复人名字还没写，应该增加个DTO-->
+        <div class="comment-reply"><span th:if="${comment.isReply}"><span>回复 </span><span>@</span><span th:text="${comment.repliedName}">Asis</span></span></div>
+        <div class="comment-reply-content" th:if="${comment.isReply}"><p><span class="comment-reply-content-quote">“</span><span th:text="${comment.replyContent}">这是被回复的内容</span><span class="comment-reply-content-quote">”</span></p></div>
+        <div class="comment-content">
+            <p th:text="${comment.content}">作者真的良心，世界上多几个这样的选手早世界和平了。</p>
+        </div>
+        <div class="comment-footer">
+            <div class="comment-controls">
+                <button th:id="${comment.id}" class="comment-control-reply">
+                    <span class="glyphicon glyphicon-comment"></span><span>回复</span>
+                </button>
+            </div>
+            <div class="comment-date">
+                <span class="glyphicon glyphicon-time"></span><span th:text="${#dates.format(comment.createdAt,'yyyy年MM月dd日 HH:mm')}">2018年9月23日 下午1:51</span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+.search-title{
+    background-color: #202020;
+    padding: 15px 40px;
+    margin: 0 -40px 40px -40px;
+}
+.search-title h1{
+    font-size: 25px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0;
+}
+.page-control-next{
+    float: right;
+}
+
+
+/* 仅是前端开发测试时所用样式，可能会被markdown解析为html时替换*/
+/* 开始 */
+article{
+    font-size: 16px;
+    color: #656565;
+}
+.article-content a,.article-content a:link,.article-content a:visited{
+    color: #95a5a6;
+}
+.article-content a:hover{
+    color:#7f8c8d;
+}
+
+/* 结束 */
+article{
+    margin-bottom: 25px;
+}
+.article-title{
+    background-color: #f5f5f5;
+    padding: 15px 40px;
+    margin: 0 -40px;
+}
+.article-title h1{
+    margin: 0;
+    color: #303030;
+    font-size: 20px;
+    font-weight: bold;
+}
+.article-title h1 a:hover{
+    color: #95a5a6;
+}
+.article-content-more{
+    color:#95a5a6;
+    margin: 0;
+    text-align: right;
+    margin-bottom: 10px;
+}
+.article-content-more a:hover{
+    color:#7f8c8d;
+}
+.article-content {
+    padding-top: 20px;
+}
+.article-content p{
+    font-size: 15px;
+}
+
+.footer-spacing div:first-child{
+    margin-bottom: 5px;
+}
+.footer-spacing div{
+    border-top-width: 5px;
+    border-top-style: solid;
+    border-top-color: #f5f5f5;
+}
+
+.article-meta{
+    padding-top: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #656565;
+    text-transform: uppercase;
+}
+.article-meta div:not(:last-child){
+    margin-bottom: 5px;
+}
+.article-meta-icon{
+    margin-right: 10px;
+}
+
+.page-controls{
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    margin: 0 -40px;
+    margin-top: 60px;
+    margin-bottom:40px;
+    padding: 20px 40px;
+}
+.page-controls a{
+    vertical-align: middle;
+}
+.page-controls a:hover{
+    color: #656565;
+}
+.page-control-newer{
+    float: right;
+}
